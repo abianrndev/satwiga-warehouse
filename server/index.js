@@ -2,31 +2,55 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-//load environment variables
+// Load environment variables
 dotenv.config();
 
-//init app
+// Import routes
+const userRoutes = require('./routes/userRoutes');
+const itemRoutes = require('./routes/itemRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const transactionRoutes = require('./routes/transactionRoutes.js');
+const reportRoutes = require('./routes/reportRoutes');
+
+// Initialize app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-//middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//routes
+// Basic route
 app.get('/', (req, res) => {
-  res.send('Welcome to Warehouse API');
+  res.send('Warehouse Management API is running!');
 });
 
-// Import routes (akan kita buat nanti)
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/items', require('./routes/itemRoutes'));
-// app.use('/api/categories', require('./routes/categoryRoutes'));
-// app.use('/api/transactions', require('./routes/transactionRoutes'));
-// app.use('/api/reports', require('./routes/reportRoutes'));
+// Use routes
+app.use('/api/users', userRoutes);
+app.use('/api/items', itemRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/reports', reportRoutes);
+
+
+//simple test route
+app.post('/api/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'API testng works YAYYY!',
+    data: req.body
+  });
+});
 
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Trey these endpoints: 
+  - GET http://localhost:${PORT}/
+  - POST http://localhost:${PORT}/api/test
+  - POST http://localhost:${PORT}/api/users/login
+  - POST http://localhost:${PORT}/api/users/register
+  - GET http://localhost:${PORT}/api/users/profile
+  - GET http://localhost:${PORT}/api/users`);
 });
